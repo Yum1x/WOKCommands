@@ -170,6 +170,7 @@ export interface ICommand {
   syntax?: string
   requiredPermissions?: PermissionString[]
   permissions?: PermissionString[]
+  allowRoles?: string[] | undefined
   cooldown?: string
   globalCooldown?: string
   ownerOnly?: boolean

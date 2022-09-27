@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -65,8 +69,8 @@ class WOKCommands extends events_1.EventEmitter {
         }
         let { commandsDir = '', commandDir = '', featuresDir = '', featureDir = '', messagesPath, mongoUri, showWarns = true, delErrMsgCooldown = -1, defaultLanguage = 'english', ignoreBots = true, dbOptions, testServers, botOwners, disabledDefaultCommands = [], typeScript = false, ephemeral = true, debug = false, } = options || {};
         if (mongoUri) {
-            await mongo_1.default(mongoUri, this, dbOptions);
-            this._mongoConnection = mongo_1.getMongoConnection();
+            await (0, mongo_1.default)(mongoUri, this, dbOptions);
+            this._mongoConnection = (0, mongo_1.getMongoConnection)();
             const results = await prefixes_1.default.find({});
             for (const result of results) {
                 const { _id, prefix } = result;

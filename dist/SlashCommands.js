@@ -15,19 +15,18 @@ class SlashCommands {
     }
     async setUp(listen, typeScript = false) {
         // Do not pass in TS here because this should always compiled to JS
-        for (const [file, fileName] of get_all_files_1.default(path_1.default.join(__dirname, 'command-checks'))) {
+        for (const [file, fileName] of (0, get_all_files_1.default)(path_1.default.join(__dirname, "command-checks")))
             this._commandChecks.set(fileName, require(file));
-        }
         const replyFromCheck = async (reply, interaction) => {
             if (!reply) {
                 return new Promise((resolve) => {
-                    resolve('No reply provided.');
+                    resolve("No reply provided.");
                 });
             }
-            if (typeof reply === 'string') {
+            if (typeof reply === "string") {
                 return interaction.reply({
                     content: reply,
-                    ephemeral: this._instance.ephemeral,
+                    ephemeral: this._instance.ephemeral
                 });
             }
             else {
@@ -40,12 +39,12 @@ class SlashCommands {
                 }
                 return interaction.reply({
                     embeds,
-                    ephemeral: this._instance.ephemeral,
+                    ephemeral: this._instance.ephemeral
                 });
             }
         };
         if (listen) {
-            this._client.on('interactionCreate', async (interaction) => {
+            this._client.on("interactionCreate", async (interaction) => {
                 if (!interaction.isCommand()) {
                     return;
                 }
@@ -55,8 +54,8 @@ class SlashCommands {
                 const command = this._instance.commandHandler.getCommand(commandName);
                 if (!command) {
                     interaction.reply({
-                        content: this._instance.messageHandler.get(guild, 'INVALID_SLASH_COMMAND'),
-                        ephemeral: this._instance.ephemeral,
+                        content: this._instance.messageHandler.get(guild, "INVALID_SLASH_COMMAND"),
+                        ephemeral: this._instance.ephemeral
                     });
                     return;
                 }
@@ -71,6 +70,7 @@ class SlashCommands {
                         return;
                     }
                 }
+                // @ts-ignore
                 this.invokeCommand(interaction, commandName, options, args);
             });
         }
@@ -92,8 +92,11 @@ class SlashCommands {
     }
     didOptionsChange(command, options) {
         return (command.options?.filter((opt, index) => {
-            return (opt?.required !== options[index]?.required &&
+            return (
+            // @ts-ignore
+            opt?.required !== options[index]?.required &&
                 opt?.name !== options[index]?.name &&
+                // @ts-ignore
                 opt?.options?.length !== options.length);
         }).length !== 0);
     }
@@ -113,26 +116,15 @@ class SlashCommands {
         const cmd = commands.cache.find((cmd) => cmd.name === name);
         if (cmd) {
             const optionsChanged = this.didOptionsChange(cmd, options);
-            if (cmd.description !== description ||
-                cmd.options.length !== options.length ||
-                optionsChanged) {
-                console.log(`WOKCommands > Updating${guildId ? ' guild' : ''} slash command "${name}"`);
-                return commands?.edit(cmd.id, {
-                    name,
-                    description,
-                    options,
-                });
+            if (cmd.description !== description || cmd.options.length !== options.length || optionsChanged) {
+                console.log(`WOKCommands > Updating${guildId ? " guild" : ""} slash command "${name}"`);
+                return commands?.edit(cmd.id, { name, description, options });
             }
             return Promise.resolve(cmd);
         }
         if (commands) {
-            console.log(`WOKCommands > Creating${guildId ? ' guild' : ''} slash command "${name}"`);
-            const newCommand = await commands.create({
-                name,
-                description,
-                options,
-            });
-            return newCommand;
+            console.log(`WOKCommands > Creating${guildId ? " guild" : ""} slash command "${name}"`);
+            return await commands.create({ name, description, options });
         }
         return Promise.resolve(undefined);
     }
@@ -141,7 +133,7 @@ class SlashCommands {
         if (commands) {
             const cmd = commands.cache.get(commandId);
             if (cmd) {
-                console.log(`WOKCommands > Deleting${guildId ? ' guild' : ''} slash command "${cmd.name}"`);
+                console.log(`WOKCommands > Deleting${guildId ? " guild" : ""} slash command "${cmd.name}"`);
                 cmd.delete();
             }
         }
@@ -149,28 +141,25 @@ class SlashCommands {
     }
     async invokeCommand(interaction, commandName, options, args) {
         const command = this._instance.commandHandler.getCommand(commandName);
-        if (!command || !command.callback) {
+        if (!command || !command.callback)
             return;
-        }
         const reply = await command.callback({
             member: interaction.member,
             guild: interaction.guild,
             channel: interaction.channel,
             args,
-            text: args.join(' '),
+            text: args.join(" "),
             client: this._client,
             instance: this._instance,
             interaction,
             options,
-            user: interaction.user,
+            user: interaction.user
         });
         if (reply) {
-            if (typeof reply === 'string') {
-                interaction.reply({
-                    content: reply,
-                });
+            if (typeof reply === "string") {
+                interaction.reply({ content: reply });
             }
-            else if (typeof reply === 'object') {
+            else if (typeof reply === "object") {
                 if (reply.custom) {
                     interaction.reply(reply);
                 }

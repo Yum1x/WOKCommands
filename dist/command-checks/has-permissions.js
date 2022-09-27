@@ -7,19 +7,19 @@ module.exports = (guild, command, instance, member, user, reply) => {
     if (!guild || !member) {
         return true;
     }
-    const { requiredPermissions, error } = command;
+    const { requiredPermissions, error, allowRoles } = command;
+    for (const role of allowRoles || [])
+        if (member.roles.cache.has(role))
+            return true;
     for (const perm of requiredPermissions || []) {
         // @ts-ignore
         if (!member.permissions.has(perm)) {
             if (error) {
-                error({
-                    error: CommandErrors_1.default.MISSING_PERMISSIONS,
-                    command,
-                });
+                error({ error: CommandErrors_1.default.MISSING_PERMISSIONS, command });
             }
             else {
-                reply(instance.messageHandler.get(guild, 'MISSING_PERMISSION', {
-                    PERM: perm,
+                reply(instance.messageHandler.get(guild, "MISSING_PERMISSION", {
+                    PERM: perm
                 })).then((message) => {
                     if (!message) {
                         return;

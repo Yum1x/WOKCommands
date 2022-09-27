@@ -1,7 +1,11 @@
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
 }) : (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
@@ -26,13 +30,13 @@ const discord_js_1 = require("discord.js");
 const _get_first_embed_1 = __importDefault(require("./!get-first-embed"));
 const _ReactionListener_1 = __importStar(require("./!ReactionListener"));
 const sendHelpMenu = (message, instance) => {
-    const { embed, reactions } = _get_first_embed_1.default(message, instance);
+    const { embed, reactions } = (0, _get_first_embed_1.default)(message, instance);
     message.channel
         .send({
         embeds: [embed],
     })
         .then((message) => {
-        _ReactionListener_1.addReactions(message, reactions);
+        (0, _ReactionListener_1.addReactions)(message, reactions);
     });
 };
 module.exports = {
